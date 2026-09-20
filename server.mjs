@@ -16,9 +16,9 @@ export function validateLead(body) {
   }
   result.email=result.email.toLowerCase();
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(result.email) || !roles.has(result.role)) throw Error('invalid');
-  if (typeof body.newsletter !== 'boolean' || body.publicConsent !== true || body.website) throw Error('invalid');
+  if (typeof body.newsletter !== 'boolean' || body.website) throw Error('invalid');
   if (typeof body.requestId !== 'string' || !/^[a-f0-9-]{36}$/i.test(body.requestId)) throw Error('invalid');
-  return {...result, newsletter:body.newsletter,publicConsent:true,requestId:body.requestId,source:'guide-influence-maroc-2026'};
+  return {...result, newsletter:body.newsletter,requestId:body.requestId,source:'guide-influence-maroc-2026'};
 }
 export function createDownloadToken(secret, now=Date.now()) {
   const expiry=String(Math.floor(now/1000)+3600);
@@ -49,7 +49,7 @@ export function createRequestHandler(config=process.env, fetcher=fetch) {
         if(req.body === undefined)for await(const chunk of req){raw+=chunk;if(Buffer.byteLength(raw)>8192)return json(res,413,{ok:false});}
         if(Buffer.byteLength(raw)>8192)return json(res,413,{ok:false});
         let lead;
-        try{lead=validateLead(JSON.parse(raw));}catch{return json(res,400,{ok:false,message:'Vérifiez les champs obligatoires et votre accord au partage.'});}
+        try{lead=validateLead(JSON.parse(raw));}catch{return json(res,400,{ok:false,message:'Vérifiez les champs obligatoires.'});}
         const upstream=await fetcher(config.APPS_SCRIPT_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({...lead,secret:config.LEMON_WEBHOOK_SECRET}),signal:AbortSignal.timeout(25000),redirect:'follow'});
         let saved;
         try {saved=await upstream.json();} catch {return json(res,502,{ok:false,message:'La connexion Google ne répond pas correctement. Merci de réessayer plus tard.'});}

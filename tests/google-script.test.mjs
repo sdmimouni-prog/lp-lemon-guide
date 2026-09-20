@@ -20,11 +20,12 @@ function fixture(){
   });vm.runInContext(source,context);
   return{context,rows,mail,fail:()=>{failMail=true;},recover:()=>{failMail=false;}};
 }
-const lead={secret:'secret',requestId:'d7a8e2ca-1518-4de0-9d9b-5df72a49e3f1',fullName:'=FORMULA()',email:'test@example.com',company:'Test',role:'Autre',newsletter:false,publicConsent:true,source:'guide-influence-maroc-2026'};
+const lead={secret:'secret',requestId:'d7a8e2ca-1518-4de0-9d9b-5df72a49e3f1',fullName:'=FORMULA()',email:'test@example.com',company:'Test',role:'Autre',newsletter:false,source:'guide-influence-maroc-2026'};
 const post=(f,data=lead)=>f.context.doPost({postData:{contents:JSON.stringify(data)}});
 test('script authenticates webhook and records one lead for repeated request IDs',()=>{
   const f=fixture();assert.equal(post(f,{...lead,secret:'wrong'}).ok,false);assert.equal(f.rows.length,1);
   assert.equal(post(f).ok,true);assert.equal(post(f).ok,true);assert.equal(f.rows.length,2);assert.equal(f.mail.length,1);
+  assert.equal(f.rows[1][6],'Non recueilli — case retirée');
   assert.equal(f.rows[1][1],"'=FORMULA()");
   assert.equal(f.mail[0].to,'sd.mimouni@richmedia.ma,a.amazouz@richmedia.ma,t.elabbadi@richmedia.ma');
 });

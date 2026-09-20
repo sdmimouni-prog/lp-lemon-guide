@@ -16,7 +16,7 @@
     form.querySelectorAll('input[required]').forEach(input=>input.value=input.value.trim());
     if(!form.reportValidity())return;
     const values=new FormData(form);
-    const payload={fullName:values.get('fullName'),email:values.get('email'),company:values.get('company'),role:values.get('role'),newsletter:values.get('newsletter')==='yes',publicConsent:values.get('publicConsent')==='yes',website:values.get('website')||''};
+    const payload={fullName:values.get('fullName'),email:values.get('email'),company:values.get('company'),role:values.get('role'),newsletter:values.get('newsletter')==='yes',website:values.get('website')||''};
     const fingerprint=JSON.stringify(payload);
     if(lastPayload && lastPayload!==fingerprint)requestId=crypto.randomUUID();
     lastPayload=fingerprint;

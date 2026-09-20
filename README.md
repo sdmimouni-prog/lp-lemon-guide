@@ -20,7 +20,7 @@ Tant que ces étapes ne sont pas terminées, le serveur renvoie une erreur expli
 
 ## Fonctionnement
 
-- Validation des champs côté navigateur et serveur, consentement explicite au tableau accessible par lien, champ piège contre les robots et limitation des tentatives.
+- Validation des champs côté navigateur et serveur, champ piège contre les robots et limitation des tentatives.
 - Identifiant stable lors d’une nouvelle tentative, verrou Google et détection des doublons pour éviter une seconde ligne après une interruption réseau.
 - Enregistrement dans Google Sheets avant confirmation au visiteur. Les erreurs d’envoi e-mail restent marquées dans le tableau et sont retentées par un déclencheur.
 - Téléchargement du PDF original fourni, protégé par un lien signé valable une heure. Le serveur ne publie pas le dossier `private`, les tests, le script Google ni `.env`.

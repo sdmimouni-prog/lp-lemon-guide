@@ -44,7 +44,7 @@ function doPost(e) {
       const count = Number(cache.get(key)||0);
       if(count >= 5)return json_({ok:false});
       cache.put(key,String(count+1),60);
-      sheet.appendRow([new Date(),safe_(data.fullName),safe_(data.email.toLowerCase()),safe_(data.company),safe_(data.role),data.newsletter?'Oui':'Non','Oui — tableau accessible par lien',data.source,data.requestId,'À envoyer']);
+      sheet.appendRow([new Date(),safe_(data.fullName),safe_(data.email.toLowerCase()),safe_(data.company),safe_(data.role),data.newsletter?'Oui':'Non','Non recueilli — case retirée',data.source,data.requestId,'À envoyer']);
       SpreadsheetApp.flush();
       row = sheet.getLastRow();
     }
@@ -61,7 +61,7 @@ function validate_(d) {
     if(typeof d[name]!=='string'||!d[name].trim()||d[name].length>max||/[\r\n\x00-\x1f]/.test(d[name]))throw Error('invalid');
     d[name]=d[name].trim();
   }
-  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(d.email)||d.publicConsent!==true||typeof d.newsletter!=='boolean'||! /^[a-f0-9-]{36}$/i.test(d.requestId)||d.source!=='guide-influence-maroc-2026')throw Error('invalid');
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(d.email)||typeof d.newsletter!=='boolean'||! /^[a-f0-9-]{36}$/i.test(d.requestId)||d.source!=='guide-influence-maroc-2026')throw Error('invalid');
   if(!['Direction générale','Direction marketing','Communication','Digital et social media','Entrepreneur / Fondateur','Autre'].includes(d.role))throw Error('invalid');
 }
 function safe_(value) { return /^[=+\-@]/.test(value) ? "'"+value : value; }
