@@ -1,0 +1,20 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": null,
+  "buildCommand": "node scripts/build-vercel.mjs",
+  "outputDirectory": "public",
+  "functions": {
+    "api/*.mjs": {
+      "maxDuration": 30,
+      "excludeFiles": "{private/**,public/**,index.html,google-apps-script/**,tests/**}"
+    }
+  },
+  "rewrites": [{"source":"/download/guide.pdf","destination":"/api/download"}],
+  "headers": [
+    {"source":"/assets/guide-influence-lemon-mind-2026.pdf","headers":[
+      {"key":"Content-Disposition","value":"attachment; filename=Guide-strategique-influence-Lemon-Mind-2026.pdf"},
+      {"key":"X-Robots-Tag","value":"noindex"}
+    ]},
+    {"source":"/form.js","headers":[{"key":"Cache-Control","value":"no-cache"}]}
+  ]
+}

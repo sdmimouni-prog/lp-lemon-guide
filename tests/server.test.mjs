@@ -1,8 +1,24 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {randomUUID} from 'node:crypto';
-import {createServer,validateLead,createDownloadToken,validDownloadToken} from '../server.mjs';
+import {createServer,createRequestHandler,validateLead,createDownloadToken,validDownloadToken} from '../server.mjs';
 const lead=()=>({fullName:'Test technique',email:'test@example.com',company:'Test',role:'Autre',newsletter:false,publicConsent:true,requestId:randomUUID(),website:''});
+test('Vercel parsed request bodies reach Google and return JSON',async()=>{
+  const data=lead();let output;let status;
+  const handler=createRequestHandler({APPS_SCRIPT_URL:'https://test.invalid',LEMON_WEBHOOK_SECRET:'secret',DOWNLOAD_SECRET:'download'},async(_,opts)=>{
+    assert.equal(JSON.parse(opts.body).requestId,data.requestId);
+    return new Response(JSON.stringify({ok:true,requestId:data.requestId}));
+  });
+  await handler({method:'POST',url:'/api/leads',body:data,headers:{'content-type':'application/json'},socket:{remoteAddress:'127.0.0.1'}},{writeHead(code){status=code;},end(body){output=JSON.parse(body);}});
+  assert.equal(status,200);assert.equal(output.ok,true);assert.match(output.downloadUrl,/^\/download\/guide.pdf\?token=/);
+});
+test('Vercel download route validates the token before redirecting to the static PDF',async()=>{
+  let status;let headers;
+  const handler=createRequestHandler({DOWNLOAD_SECRET:'secret',PUBLIC_GUIDE_URL:'/assets/guide.pdf'});
+  const res={writeHead(code,value){status=code;headers=value;},end(){}};
+  await handler({method:'GET',url:'/download/guide.pdf?token=invalid'},res);assert.equal(status,403);
+  await handler({method:'GET',url:'/download/guide.pdf?token='+createDownloadToken('secret')},res);assert.equal(status,302);assert.equal(headers.Location,'/assets/guide.pdf');
+});
 test('validation refuses invalid emails, missing consent, bots and overlong data',()=>{
   for(const mutation of [{email:'invalid'},{publicConsent:false},{website:'spam'},{company:'x'.repeat(161)},{role:'unknown'}])assert.throws(()=>validateLead({...lead(),...mutation}));
   assert.equal(validateLead({...lead(),fullName:' Test '}).fullName,'Test');

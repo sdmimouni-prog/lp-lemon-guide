@@ -23,7 +23,9 @@
     pending=true;submit.disabled=true;submit.setAttribute('aria-busy','true');error.hidden=true;label.textContent='Enregistrement…';
     try {
       const response=await fetch('/api/leads',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({...payload,requestId}),signal:AbortSignal.timeout(30000)});
-      const result=await response.json();
+      let result;
+      try { result=await response.json(); }
+      catch { throw Error('Le service du formulaire est momentanément indisponible. Merci de réessayer plus tard.'); }
       if(!response.ok || result.ok!==true)throw Error(result.message||'L’enregistrement a échoué. Merci de réessayer.');
       if(!result.downloadUrl?.startsWith('/download/guide.pdf?token='))throw Error('Le lien de téléchargement est indisponible. Réessayez.');
       link.href=result.downloadUrl;link.download='Guide-strategique-influence-Lemon-Mind-2026.pdf';

@@ -29,6 +29,10 @@ Tant que ces étapes ne sont pas terminées, le serveur renvoie une erreur expli
 
 ## Mise en ligne
 
-Ce projet exige un hébergement Node.js persistant. Une publication des seuls fichiers statiques ne peut pas faire fonctionner `/api/leads`. Configurer les variables d’environnement du `.env.example`, `HOST=0.0.0.0` et le port fourni par l’hébergeur. Conserver le PDF dans `private/` et lancer `npm start` derrière HTTPS.
+Vercel : `vercel.json` configure la génération des fichiers publics et les fonctions `api/leads.mjs` et `api/download.mjs`. Ajouter `APPS_SCRIPT_URL`, `LEMON_WEBHOOK_SECRET` et `DOWNLOAD_SECRET` dans les variables d’environnement Vercel, puis redéployer. Les valeurs Google doivent correspondre au déploiement Apps Script actif. Tant qu’elles sont absentes, l’API répond 503 avec un message lisible.
+
+Sur Vercel, le PDF de 27 Mo est distribué comme fichier statique pour éviter les limites des réponses des fonctions. Après validation du lien signé, `/download/guide.pdf` redirige vers ce fichier. Le fichier statique peut être partagé directement : ce parcours est un formulaire de collecte, pas une protection confidentielle du PDF, également présent dans le dépôt GitHub public.
+
+Un hébergement Node.js persistant reste possible : configurer les variables du `.env.example`, `HOST=0.0.0.0` et le port fourni par l’hébergeur, puis lancer `npm start` derrière HTTPS. Dans ce mode, le serveur transmet directement le PDF après validation du lien signé.
 
 Documentation Google : https://developers.google.com/apps-script/guides/web et https://developers.google.com/apps-script/reference/mail/mail-app
