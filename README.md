@@ -6,9 +6,17 @@ Le formulaire est servi par Node.js et transmet les leads à Google Apps Script.
 
 Node.js 22 ou supérieur, aucune dépendance à installer. Dans ce dossier : `npm start`. La page est accessible sur http://127.0.0.1:8097. `npm test` exécute les tests du serveur.
 
-## Connexion Google à terminer
+## Connexion Google active
 
-Tableau créé : https://docs.google.com/spreadsheets/d/1dgAXwEEa2yrfQBzBR0ZOzk8ulya1C87Lb8YHsZOqA7s/edit
+Production : https://lp-lemon-guide.vercel.app/
+
+Projet Apps Script : https://script.google.com/home/projects/1BXGRzxs817vClZmwBKLNzwgqwcU9qW64-sHfNBF-ueUB49KpBwx7krzG/edit
+
+La connexion Vercel → Apps Script est configurée. Une soumission réelle de test a confirmé l’écriture dans le Sheet, le statut « Envoyée » des notifications et le téléchargement du PDF original (empreinte SHA-256 identique). Le tableau est accessible en lecture à toute personne ayant le lien.
+
+Tableau des leads : https://docs.google.com/spreadsheets/d/1dgAXwEEa2yrfQBzBR0ZOzk8ulya1C87Lb8YHsZOqA7s/edit
+
+Pour réinstaller dans un nouvel environnement (les secrets ne sont pas inclus dans le dépôt ni dans le ZIP) :
 
 1. Dans le projet Google Apps Script du compte sd.mimouni@richmedia.ma, remplacer Code.gs par `google-apps-script/Code.gs`.
 2. Exécuter `setup` et autoriser l’accès Google demandé. Cette fonction configure le tableau, le place dans ChatGPT, active sa lecture pour toute personne ayant le lien et crée une relance des notifications en échec toutes les cinq minutes.
@@ -16,7 +24,7 @@ Tableau créé : https://docs.google.com/spreadsheets/d/1dgAXwEEa2yrfQBzBR0ZOzk8
 4. Déployer une application Web, exécutée en tant que propriétaire, accessible à tous. Le secret est exigé par le code pour toute écriture. Copier l’URL `/exec` dans `APPS_SCRIPT_URL` du `.env`.
 5. Redémarrer `npm start`, puis vérifier une soumission de test et sa notification aux trois destinataires.
 
-Tant que ces étapes ne sont pas terminées, le serveur renvoie une erreur explicite et ne simule pas d’enregistrement. Le tableau n’est pas encore public tant que `setup` n’a pas réussi.
+Dans un nouvel environnement sans ces variables, le serveur renvoie une erreur explicite et ne simule pas d’enregistrement.
 
 ## Fonctionnement
 
